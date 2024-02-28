@@ -1,7 +1,598 @@
-<html>
-	<head>
-	</head>
-	<body>
-		Homework 2 index.html here
-	</body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CS184 MeshMixel</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-image: url("images/header/bean.png"); 
+            background-size: cover; 
+            background-position: center 20%;
+            color: #858585; 
+            text-align: center;
+            padding: 50px 0;
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .image-row {
+            display: flex;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            margin-bottom: 40px;
+        }
+
+        .image-row-centered {
+            display: flex;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+
+        .image {
+            flex: 0 0 calc(50% - 20px);
+            margin-top: 10px;
+            margin-right: 20px;
+            margin-left: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .image img {
+            max-width: 100%;
+            height: auto;
+            margin-top: 20px;
+            border: 6px solid #535353; /* Add a border to make it clear it's an image */
+        }
+
+        .image h3 {
+            font-size: 18px;
+            margin-top: 10px;
+            margin-bottom: 0px;
+        }
+
+        .image h4 {
+            font-size: 16px;
+            margin-top: 10px;
+            margin-bottom: 0px;
+            text-align: center;
+        }
+
+        .image p {
+            font-size: 14px;
+        }
+
+        .gif-image {
+            flex: 0 0 calc(50% - 20px);
+            margin-top: 10px;
+            margin-right: 20px;
+            margin-left: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .gif-image img {
+            width: 100%;
+            height: auto;
+            margin-top: 20px;
+            border: 6px solid #535353; /* Add a border to make it clear it's an image */
+            border-radius: 4px; /* Optional: Rounded corners for aesthetics */
+        }
+
+        .gif-image h3 {
+            font-size: 18px;
+            margin-top: 10px;
+            margin-bottom: 0px;
+        }
+
+        .gif-image p {
+            font-size: 14px;
+            text-align: center;
+        }
+
+        footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 20px 0;
+        }
+
+    </style>
+</head>
+<body>
+    <header>
+        <h1>CS184: Computer Graphics and Imaging, Spring 2024</h1>
+        <h1>Project 2: Bezier curves</h1>
+        <h2>Pranav Kolluri, Rohan Agrawal</h2>
+    </header>
+    <div class="container">
+
+        <section>
+            <h2>Introduction</h2>
+
+            <p>
+                In this project, we aim to implement various operations related to Bezier curves, Bezier surfaces, and triangle meshes using C++ and the provided starter code structure. 
+                The project is divided into two main sections: Section I focusing on Bezier curves and surfaces, and Section II focusing on triangle meshes and half-edge data structure.
+
+                <div class="image-row-centered">
+                    <div class="image">
+                        <img src="images/header/teapot_standard.png" alt="The famous Utah Teapot, rendered with wireframe">
+                        <p><center>The famous Utah Teapot, rendered with wireframe</center></p>
+                    </div>
+                </div>
+
+                <b>In Section 1, we'll put work on Bezier curves and surfaces: </b><br>
+                <p>We start by implementing Bezier curves in Part 1 using the de Casteljau algorithm for 1D subdivision. 
+                    The de Casteljau algorithm recursively evaluates Bezier curves at given parameters, allowing us to compute intermediate control points until we obtain the final point lying on the curve.
+                </p>
+                <p>In Part 2, we extend our implementation to Bezier surfaces using separable 1D de Casteljau. 
+                    This involves subdividing the control points grid of a Bezier surface based on parameters `u` and `v`, similar to how we did for Bezier curves.
+                </p>   
+                <b>Takeaways from Section 1:</b><br>
+                <ul>
+                    <li>Understanding of the de Casteljau algorithm for evaluating Bezier curves.</li>
+                    <li>Extension of the de Casteljau algorithm to Bezier surfaces for 2D evaluation.</li>
+                    <li>Insight into the parametric representation and manipulation of Bezier curves and surfaces.</li>
+                </ul>
+                <b>Moving on to Section 2, we shift our focus to triangle meshes and the half-edge data structure</b><br>
+                <p> Part 3 involves implementing area-weighted vertex normals, which are crucial for achieving smooth shading effects on meshes.</p>
+                <p>In Part 4, we implement the edge flip operation, a local remeshing operation that modifies the mesh topology by flipping edges. 
+                    This operation is essential for maintaining mesh connectivity and improving mesh quality.</p>
+                <p>Part 5 introduces the edge split operation, another local remeshing operation that inserts a new vertex at the midpoint of an edge, thereby splitting it into two. 
+                    This operation helps in refining the mesh structure and increasing mesh density.</p>
+                <p>Finally, in Part 6, we implement loop subdivision for mesh upsampling. 
+                    Loop subdivision subdivides each triangle into four smaller triangles and updates vertex positions based on a weighted scheme, leading to a higher-resolution mesh.
+                </p>
+                <b>Takeaways from Section II:</b><br>
+                <ul>
+                <li>Understanding of the half-edge data structure for efficient mesh representation.</li>
+                <li>Knowledge of essential mesh operations such as edge flipping and splitting.</li>
+                <li>Familiarity with mesh subdivision algorithms for refining and upsampling meshes.</li>
+                </ul>
+                <p>Each part of the project builds upon the previous one, gradually enhancing our understanding of geometric modeling and mesh processing techniques.</p>
+            </p>
+        </section>
+
+        <section>
+            <br>
+            <br>
+            <h2>Section I: Bezier Curves and Surfaces</h2>
+
+            <h3>Part 1: Bezier Curves with 1D de Casteljau Subdivision</h3>
+            <p>
+                <b>De Casteljau's algorithm works as follows:</b><br>
+
+                The algorithm takes in a set of control points and a parameter t. The algorithm takes two of those points, then inserts a point in between them using linear interpolation.
+                It then takes the next two points, and inserts a point in between them using linear interpolation. It continues this process until it has a single point, which is the point on the Bezier curve at parameter t.
+                This process is repeated for every point in the set of control points, and the resulting points are the points on the Bezier curve at parameter t.
+
+                <br><br>
+
+                <b>Implementation:</b><br>
+                To implement this algorithm we followed the following steps:
+
+                <ol>
+                    <li><strong>Iterating through points:</strong> For each pair of points in the set, we scale the first point by (1 - t) and the second point by t
+                    </li>
+                    <li><strong>Linear Interpolation:</strong> We then add these two scaled points together to get the point in between them. We then push this point to the end of the set of new points.
+                    </li>
+                    <li><strong>Recursion:</strong> We then repeat this process until we have a single point, which is the point on the Bezier curve at parameter t.
+                </ol>
+              
+            
+                <div class="image-row">
+                    <div class="image">
+                        <img src="images/task1/BezStep0.png" alt="de Casteljau's algorithm Step = 0">
+                        <p><center>de Casteljau's algorithm Step = 0</center></p>
+                    </div>
+                    <div class="image">
+                        <img src="images/task1/BezStep1.png" alt="de Casteljau's algorithm Step = 1">
+                        <p><center>de Casteljau's algorithm Step = 1</center></p>
+                    </div>
+                </div>
+
+                <div class="image-row">
+                    <div class="image">
+                        <img src="images/task1/BezStep2.png" alt="de Casteljau's algorithm Step = 2">
+                        <p><center>de Casteljau's algorithm Step = 2</center></p>
+                    </div>
+                    <div class="image">
+                        <img src="images/task1/BezStep3.png" alt="de Casteljau's algorithm Step = 3">
+                        <p><center>de Casteljau's algorithm Step = 3</center></p>
+                    </div>
+                </div>
+
+                <div class="image-row">
+                    <div class="image">
+                        <img src="images/task1/BezStep4.png" alt="de Casteljau's algorithm Step = 4">
+                        <p><center>de Casteljau's algorithm Step = 4</center></p>
+                    </div>
+                <div class="image">
+                    <img src="images/task1/BezStep5.png" alt="de Casteljau's algorithm Step = 5">
+                    <p><center>de Casteljau's algorithm Step = 5</center></p>
+                </div>
+                </div>  
+                <div class="image-row-centered">
+                <div class="image">
+                    <img src="images/task1/BezDone.png" alt="Completed Bezier curve">
+                    <p><center>Completed Bezier curve</center></p>
+                </div>
+            </div>
+
+
+            <h3>Part 2: Bezier Surfaces with Separable 1D de Casteljau</h3>
+            <p>
+            <b>Separable 1D de Casteljau algorithm works as follows:</b><br>
+
+            The algorithm takes in a set of control points and two parameters u and v. The algorithm takes each row of control points and evaluates the 1D de Casteljau algorithm using the parameter u to obtain intermediate points. 
+            It then uses these intermediate points to evaluate the 1D de Casteljau algorithm again, this time using the parameter v to obtain the final point on the Bezier surface.
+            In the version with Bezier surfaces, we take a 2D grid of control points, and we evaluate the 1D de Casteljau algorithm for each row of control points, and then use the points we get from that process to evaluate the 1D de Casteljau algorithm again to obtain the final point on the Bezier surface.
+
+            <br><br>
+
+            To implement this algorithm we took the following steps:
+            <ol>
+                <li><strong>Iterating through points:</strong> For each set of points in each row of control points, we evaluate the 1 dimensional de Casteljau algorithm using the parameter `u` to obtain intermediate points.</li>
+                <li><strong>Intermediate Points:</strong> We then used these intermediate points to evaluate the 1D de Casteljau algorithm again, but instead of using 'u' we use the parameter `v` to obtain the point on the Bezier surface.</li>
+                <li><strong>Recursion:</strong> We repeated this process for each row of control points, and then used the points we get from that to evaluate the de Casteljau algorithm once more to obtain the final point on the Bezier surface.</li>
+            </ol>
+
+            <div class="image-row-centered">
+                <div class="image">
+                    <img src="images/task2/Task_2_Teapot.png" alt="Bezier Surface with 16x16 control points">
+                    <p><center>Rendered Bezier surfaces Teapot</center></p>
+                </div>
+                </div>
+
+            <p></p>
+   
+            <h2>Section II: Triangle Meshes and Half-Edge Data Structure</h2>
+
+            <h3>Part 3: Area-Weighted Vertex Normals</h3>
+            <p>
+                <p>To implement the area-weighted vertex normals, we followed these steps:</p>
+
+                <ol>
+                <li><strong>Iterating Through Faces:</strong> Using the half-edge data structure, we iterated through all faces incident to the vertex of interest.</li>
+                
+                <li><strong>Calculating Face Normals:</strong> For each face, we calculated its normal vector using the cross product of vectors formed by its vertices.</li>
+                
+                <li><strong>Weighting by Area:</strong> We weighted each face normal by its area.</li>
+                
+                <li><strong>Summation:</strong> We summed up all the weighted normals obtained from the neighboring faces.</li>
+                
+                <li><strong>Normalization:</strong> Finally, we normalized the resulting sum to obtain the area-weighted vertex normal. This ensures that the vector has unit length, preserving its direction while standardizing its magnitude.</li>
+                </ol>
+
+                <p>By following these steps, we computed accurate area-weighted vertex normals suitable for applications like Phong shading, enhancing the visual quality of the rendered surfaces.</p>
+
+
+                <div class="image-row">
+                    <div class="image">
+                        <img src="images/task3/teapot_reg_w.png" alt="Utah Teapot with Flat shading and wireframe">
+                        <p><center>Utah Teapot with Flat shading and wireframe</center></p>
+                    </div>
+                    <div class="image">
+                        <img src="images/task3/teapot_phong_w.png" alt="Utah Teapot with Phong shading and wireframe">
+                        <p><center>Utah Teapot with Phong shading and wireframe</center></p>
+                    </div>
+                </div>
+
+                <div class="image-row">
+                    <div class="image">
+                        <img src="images/task3/teapot_reg.png" alt="Utah Teapot with Flat shading and no wireframe">
+                        <p><center>Utah Teapot with Flat shading and no wireframe</center></p>
+                    </div>
+                    <div class="image">
+                        <img src="images/task3/teapot_phong.png" alt="Utah Teapot with Phong shading and no wireframe">
+                        <p><center>Utah Teapot with Phong shading and no wireframe</center></p>
+                    </div>
+                </div>
+
+            </p>
+   
+            <h3>Part 4: Edge Flip</h3>
+            <p>
+                The edge flip algorithm is a local remeshing operation that modifies the mesh by flipping edges between the vertices of two triangles. 
+
+                <ol>
+                    <li><strong>Diagramming:</strong> We started by diagramming all the half edges, edges, faces, and vertices in the mesh to keep track of what needed to be changed. This helped us to keep track of what needed to be flipped, and to aid in the debugging process by giving us a sort of "source of truth" for what needed to be changed.
+                    </li>
+                    <li><strong>Defining Variables:</strong> We then created variables to store the half edges, edges, faces, and vertices. 
+                    </li>
+                    <li><strong>Reassigning Pointers:</strong> We then had to reassign all the pointers to the new half edges, edges, faces, and vertices. The pointers that were changed were the half edges on e0, e0, and the half edges that previously pointed to the edge that was flipped, as well as the half edges that would now have to point to the new edge.
+                    </li>
+                    <li><strong>Reassigning all other edges, vertices, and faces: </strong> We also had to reassign the pointers of the old half edges, edges, faces, and vertices. This involved translating every pointer for all the datapoints in our diagram into code, and reassigning the half edges of vertices, faces, and edges.
+                </ol>
+                
+                <p>
+                Luckily our debugging journey for this part was not extremely tedious. When we first implemented it we ran into a bug in which a portion of the mesh would disapear 
+                when we flipped an edge, and to resolve this we backtracked through the code and realized that we forgot to reassign the edge half edge pointers on some edges, 
+                so we reassigned those, as well as fixed a misasignment of a half edge vertex, and the code worked as intended. 
+                </p>
+
+            </p>
+
+            <div class="image-row-centered">
+                <div class="image">
+                    <img src="images/task4/edge_flip_diagram.png" alt="An image using nearest neighbor and a sample_rate = 1">
+                    <p><center>A diagram of all edges, half edges, vertices, and faces after an edge flip</center></p>
+                </div>
+            </div>
+
+            <div class="image-row">
+                <div class="image">
+                    <img src="images/task4/Q4_before_flips.png" alt="The teapot before any flips">
+                    <p><center>The teapot before any flips</center></p>
+                </div>
+                <div class="image">
+                    <img src="images/task4/Q4_flipped1.png" alt="An image using level 0 and bilinear interpolation">
+                    <p><center>The teapot after a few flips of one type of edge</center></p>
+                </div>
+            </div>
+            <div class="image-row">
+                <div class="image">
+                    <img src="images/task4/Q4_flipped2.png" alt="An image using level 0 and bilinear interpolation">
+                    <p><center>The teapot after a few flips of two typs of edge</center></p>
+                </div>
+                <div class="image">
+                    <img src="images/task4/Q4_flipped3.png" alt="An image using level 0 and bilinear interpolation">
+                    <p><center>The teapot after a combination of flips of different types of edges in series</center></p>
+                </div>
+            </div>
+
+
+
+            <h3>Part 5: Edge Split</h3>
+            <p> 
+                
+                Splitting an edge proved more difficult than flipping an edge, mostly due to the fact that we had to create multiple new half edges, faces, vertices, and edges to account for the new geometry. 
+
+                <ol>
+                    <li><strong>Diagramming:</strong> We started similar to part 4, diagramming all the edges, vertices, half edges, and faces to keep track of what needed to be changed. We found that we had to create six new half edges, 3 new edges, 2 new faces, and 1 new vertex to account for the new geometry.
+                    </li>
+                    <li><strong>Defining Variables:</strong> We then created variables to store the new half edges, edges, faces, and vertices.
+                    </li>
+                    <li><strong>Reassigning New half edges:</strong> We then had to reassign all the pointers to the new half edges, edges, faces, and vertices. We created six new half edges on the new edges, and assigned values for the vertices and faces of the new half edges. 
+                    </li>
+                    <li><strong>Reassigning all other edges, vertices, and faces: </strong> We also had to reassign the pointers of the old half edges, edges, faces, and vertices. This involved translating every pointer for all the datapoints in our diagram into code, and reassigning the half edges of vertices, faces, and edges.
+                    </li>
+                    <li><strong>Old/New Booleans:</strong> We also had to create a boolean to keep track of whether the half edge was new or old, which would come into importance in part 6. For this we assigned the half edges along the new edge to be new, and the others to be old. We also set the new vertex to new.
+                    </li>
+                    <li><strong>Calculating the new Vertex Location:</strong> We then had to calculate the new vertex location, which was the midpoint of the old edge. We did this by averaging the position of the two vertices of the old edge. 
+                    </li>
+                </ol>
+
+                The biggest issue we ran into concerning debugging was that there were a few misassigned half edges, which caused the mesh to render incorrectly. We were able to fix this by going through the code and making sure that every pointer was being reassigned correctly.
+                The other issue was we found that the vertices needed to be changed. It was assumed that because the half edges leaving vertices zero through three did not change, the properties of the vertices themselves did not need to be changed. This was incorrect, and we had to go back and reassign the half edges of the vertices as well.
+            <div class="image-row-centered">
+                <div class="image">
+                    <img src="images/task5/edge_split_diagram.png" alt="An image using nearest neighbor and a sample_rate = 16">
+                    <p><center>A diagram of all edges, half edges, vertices, and faces after an edge split</center></p>
+                </div>
+            </div>
+
+            <div class="image-row">
+                <div class="image">
+                    <img src="images/task4/Q4_before_flips.png" alt="The teapot before both splits or flips">
+                    <p><center>The teapot before both splits or flips</center></p>
+                </div>
+                <div class="image">
+                    <img src="images/task5/Q5_onlySplits.png" alt="The teapot after a few splits">
+                    <p><center>The teapot after a few splits</center></p>
+                </div>
+            </div>
+            <div class="image-row">
+            <div class="image">
+                <img src="images/task5/Q5_more_splits.png" alt="The teapot after a many splits, compound splits, and splits in many directions">
+                <p><center>The teapot after a many splits, compound splits, and splits in many directions</center></p>
+            </div>
+            <div class="image">
+                <img src="images/task5/Q5_splits_and_flips.png" alt="The teapot after many splits and flips">
+                <p><center>The teapot after many splits and flips</center></p>
+            </div>
+        </div>
+
+
+        <h3>Part 6: Loop Subdivision for Mesh Upsampling</h3>
+            <p>
+                <b>Explanation of Loop Subdivision Implementation</b>
+                <p>We implemented Loop subdivision in several steps:</p>
+                <ol>
+                <li><strong>Computing New Vertex Positions:</strong> 
+                    We calculated new positions for all vertices based on the Loop subdivision rule. 
+                    This involved iterating over each vertex, computing the weighted average of its neighboring vertices, and storing the result in <code>Vertex::newPosition</code>.</li>
+                
+                <li><strong>Updating Edge Positions:</strong> 
+                    Next, we computed updated positions for edges using the computed vertex positions. 
+                    We iterated over each edge, identified its neighboring vertices, and calculated the new edge position according to the subdivision rule.</li>
+                
+                <li><strong>Splitting Edges:</strong> 
+                    We split every edge in the mesh, ensuring to maintain information about which edges were part of the original mesh and which ones were new. 
+                    This step involved iterating over edges and splitting them, while keeping track of the edge count to avoid splitting newly created edges.</li>
+                
+                <li><strong>Flipping Edges:</strong> 
+                    We flipped any new edge that connected an old and new vertex. 
+                    This step involved iterating over edges, checking if an edge connected vertices from different sets (old and new), and flipping the edge accordingly.</li>
+                
+                <li><strong>Updating Vertex Positions:</strong> 
+                    Finally, we copied the new vertex positions into the final <code>Vertex::position</code>.</li>
+                </ol>
+
+                <div class="image-row-centered">
+                    <div class="image">
+                        <img src="images/task6/traversal_diagram.png" alt="A diagram showing how the traversal of vertices for part 1 of the process takes place.">
+                        <p><center>A diagram showing how the traversal of vertices for part 1 of the process takes place.</center></p>
+                    </div>
+                </div>
+
+                <div class="image-row">
+                    <div class="image">
+                        <img src="images/task6/teapot/t_l0.png" alt="The original Utah Teapot">
+                        <p><center>The original Utah Teapot.</center></p>
+                    </div>
+                    <div class="image">
+                        <img src="images/task6/teapot/t_l1.png" alt="The Utah Teapot at level 1 upsampling">
+                        <p><center>The Utah Teapot at level 1 upsampling.</center></p>
+                    </div>
+                    <div class="image">
+                        <img src="images/task6/teapot/t_l2.png" alt="The Utah Teapot at level 2 upsampling">
+                        <p><center>The Utah Teapot at level 2 upsampling.</center></p>
+                    </div>
+                </div>
+
+                <p>As for implementation and debugging tricks:</p>
+
+                <ul>
+                <li>We added print statements to track where we were running into stalls in the five step process. 
+                    While we planned each of the 5 steps, there's quite a bit going on, causing us to miss a number of small details related to loops as well as very minor bugs in our implementation of part 5 that only reared their heads in this part.
+                    While very crude, these statements allowed us to isolate the issues.
+                </li>
+                <li>
+                    Now that we could isolate issues, we addressed any infinite loops we detected (which were nefarious as it was all down to using the wrong variable!). 
+                    Once we had something that would run, we turned to the rendered meshes to see if they looked correct.
+                    We noticed that we had a number of issues: faces seemingly went to the origin, despite us believing we had implemented the correct logic for the new positions in part 5.
+                    In fact, while we had calculated the new positions, we had not actually assigned them to the vertices.
+                    This was a simple fix, but it was a good reminder to always check the rendered output.
+                </li>
+                <li>
+                    We then started noticing that after about 3 subdivisions, certain faces would start to look a little strange.
+                    While the faces were still there, and vaguely in the right place, they were not quite right.
+                    We were very confused, and started to track which points that this was occurring to by tracking the memory addresses of the vertices.
+                    We noticed that these all were original mesh vertices with a degree of 6. This was curious, as we had other original mesh vertices with a degree of 6 that were not having this issue.
+                    We noticed that there was a bias in the position of all of these odd vertices, all in the same direction. 
+                    We realized (to our surprise) that the halfedge for vertices was never being assigned correctly in part 5. 
+                    We never saw any indication of this when testing part 5, but once me made the fix, we saw that the issue was resolved.
+                </li>
+                </ul>
+
+                <b>What happens to sharp edges?</b><br>
+                <p>
+                    In the case of sharp edges, the Loop subdivision algorithm tends to smooth them out.
+                    Notice how the sharp edges with low triangle density become smoother after each subdivision.
+                    After a certain point, there is no longer a clear distinction between sharp and smooth edges, as the mesh becomes more uniformly dense and the edges become more rounded.<br>
+                    After some experimentation, we found that some clever edge splits would help to encourage the retention of more distinct edges.
+                    The addition of edge splits along the sharp edges helped to maintain the sharpness of the edges, as well as the overall shape of the mesh. 
+                    Using flips, these can be made uniform and symmetrical, thus leaving a pleasing new mesh with more accentuated edges.
+                </p>
+
+                <div class="image-row">
+                    <div class="image">
+                        <img src="images/task6/sharp_edges/t_reg.png" alt="The pure torus mesh">
+                        <p><center>The pure torus mesh.</center></p>
+                    </div>
+                    <div class="image">
+                        <img src="images/task6/sharp_edges/split_edge.png" alt="The modified torus mesh">
+                        <p><center>The modified torus mesh.</center></p>
+                    </div>
+                </div>
+
+                <div class="image-row">
+                    <div class="image">
+                        <img src="images/task6/sharp_edges/torus_l3.png" alt="The pure torus mesh at level 3 upsampling">
+                        <p><center>The pure torus mesh at level 3 upsampling.</center></p>
+                    </div>
+                    <div class="image">
+                        <img src="images/task6/sharp_edges/split_edge_l3.png" alt="The modified torus mesh at level 3 upsampling">
+                        <p><center>The modified torus mesh at level 3 upsampling.</center></p>
+                    </div>
+                </div>
+
+                <p>
+                    Notice how in the modified torus mesh, the upsampled mesh looks far more hexagonal than the pure torus mesh. 
+                    The addition of the additonal edges at these sharp edges has helped to maintain the sharpness of the edges, as well as the overall shape of the mesh.
+                </p>
+
+                <b>What about upsampling a cube?</b><br>
+                <p>
+                    An interesting observation is that the upsampling of a cube using Loop subdivision results in a shape that is asymmetric, behavior that may not intuitively be expected.
+                    This, however, can be explained by the asymmetric nature of the original cube mesh.
+                    A cube has a single diagonal per face, which inherently introduces an asymmetrical aspect to its geometry. 
+                    When the Loop subdivision algorithm is applied, it operates based on the connectivity and geometric properties of the mesh. 
+                    In the case of a cube, this asymmetry in the original mesh influences the subdivision process.
+                    During subdivision, the algorithm redistributes vertices and refines edges based on certain rules. 
+                    However, the presence of the diagonal introduces a bias in this process.<br>
+                    How can this be combated? One has to make the mesh more symmetric, by adding more edges to the cube and then carefully flipping them.
+                    Every face must be identical in order to maintain the symmetry of the mesh as it is upsampled.
+                </p>
+
+                <div class="image-row">
+                    <div class="image">
+                        <img src="images/task6/cube_ex/cube.png" alt="The pure cube mesh">
+                        <p><center>The pure cube mesh.</center></p>
+                    </div>
+                    <div class="image">
+                        <img src="images/task6/cube_ex/split_cube.png" alt="The modified cube mesh">
+                        <p><center>The modified cube mesh.</center></p>
+                    </div>
+                </div>
+
+                <div class="image-row">
+                    <div class="image">
+                        <img src="images/task6/cube_ex/cube_l1.png" alt="The pure cube mesh at level 1 upsampling">
+                        <p><center>The pure cube mesh at level 1 upsampling.</center></p>
+                    </div>
+                    <div class="image">
+                        <img src="images/task6/cube_ex/split_cube_l1.png" alt="The modified cube mesh at level 1 upsampling">
+                        <p><center>The modified cube mesh at level 1 upsampling.</center></p>
+                    </div>
+                </div>
+
+                <div class="image-row">
+                    <div class="image">
+                        <img src="images/task6/cube_ex/cube_l4.png" alt="The pure cube mesh at level 4 upsampling">
+                        <p><center>The pure cube mesh at level 4 upsampling.</center></p>
+                    </div>
+                    <div class="image">
+                        <img src="images/task6/cube_ex/split_cube_l4.png" alt="The modified cube mesh at level 4 upsampling">
+                        <p><center>The modified cube mesh at level 4 upsampling.</center></p>
+                    </div>
+                </div>
+
+                <p>
+                    Observe how the modified cube mesh at level 4 upsampling looks far more symmetric than the pure cube mesh at level 4 upsampling.
+                    By creating a more symmetric mesh, we have been able to maintain the symmetry of the mesh as it is upsampled!
+                </p>
+
+            </p>
+
+        </section>
+
+    </div>
+
+    <footer>
+        <p>Pranav Kolluri, 2024<br>
+        CS184: Computer Graphics and Imaging<br>
+        University of California, Berkeley</p>
+    </footer>
+
+
+</body>
 </html>
