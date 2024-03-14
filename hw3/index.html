@@ -1,7 +1,807 @@
-<html>
-	<head>
-	</head>
-	<body>
-		Homework 3 index.html here
-	</body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CS184 LuminaTrace</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            /* background-image: url("images/header/walle.png");  */
+            background-color: #0096b4;
+            background-size: cover; 
+            background-position: center 20%;
+            color: #ffffff; 
+            text-align: center;
+            padding: 50px 0;
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .image-row {
+            display: flex;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            margin-bottom: 40px;
+        }
+
+        .image-row-centered {
+            display: flex;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+
+        .image {
+            flex: 0 0 calc(50% - 20px);
+            margin-top: 10px;
+            margin-right: 20px;
+            margin-left: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .image img {
+            max-width: 100%;
+            height: auto;
+            margin-top: 20px;
+            border: 6px solid #535353; /* Add a border to make it clear it's an image */
+        }
+
+        .image h3 {
+            font-size: 18px;
+            margin-top: 10px;
+            margin-bottom: 0px;
+        }
+
+        .image h4 {
+            font-size: 16px;
+            margin-top: 10px;
+            margin-bottom: 0px;
+            text-align: center;
+        }
+
+        .image p {
+            font-size: 14px;
+        }
+
+        .gif-image {
+            flex: 0 0 calc(50% - 20px);
+            margin-top: 10px;
+            margin-right: 20px;
+            margin-left: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .gif-image img {
+            width: 100%;
+            height: auto;
+            margin-top: 20px;
+            border: 6px solid #535353; /* Add a border to make it clear it's an image */
+            border-radius: 4px; /* Optional: Rounded corners for aesthetics */
+        }
+
+        .gif-image h3 {
+            font-size: 18px;
+            margin-top: 10px;
+            margin-bottom: 0px;
+        }
+
+        .gif-image p {
+            font-size: 14px;
+            text-align: center;
+        }
+
+        footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        table {
+        width: 100%;
+        border-collapse: collapse;
+        }
+    
+        th, td {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+        }
+    
+        th {
+        background-color: #f2f2f2;
+        }
+    
+        tr:nth-child(even) {
+        background-color: #f2f2f2;
+        }
+
+    </style>
+</head>
+<body>
+    <header>
+        <h1>CS184: Computer Graphics and Imaging, Spring 2024</h1>
+        <h1>Project 3: Path Tracing</h1>
+        <h2>Pranav Kolluri, Rohan Agrawal</h2>
+    </header>
+    <div class="container">
+
+        <section>
+            <h2>Introduction</h2>
+
+            <p>
+                In this project, we aim to implement the core elements of a physically-based renderer via path-tracing.
+                The project is divided into five main sections plus extra credit: Part 1 involves implementing ray generation and scene intersection. Part 2 has us building a BVH (Bounding Volume Hierarchy) to accelerate our rendering.
+                Part 3 involves implementing direct illumination, and Part 4 has us complete a global illumination by adding indirect illumination. Finally, in Part 5, we add adaptive sampling to our renderer.
+
+                <div class="image-row-centered">
+                    <div class="image">
+                        <img src="images/header/bunny.png" alt="A bunny in a box!">
+                        <p><center>A bunny in a box!</center></p>
+                    </div>
+                </div>
+
+                <b>Part 1:</b><br>
+                <ul>
+                    <li>Task 1 involves generating camera rays by transforming normalized image coordinates into world space, accounting for camera position and direction.</li>
+                    <li>Task 2 requires generating pixel samples by estimating radiance over pixels, achieved through averaging multiple random rays and computing their radiance contributions.</li>
+                    <li>In Task 3, we'll implement ray-triangle intersection, ensuring valid intersections within the ray's parameter range and populating intersection details.</li>
+                    <li>Task 4 involves handling ray-sphere intersection similarly, calculating valid intersections and populating intersection information.</li>
+                </ul>
+                
+                <b>Part 2:</b><br>
+                <ul>
+                    <li>Task 1 involves creating a Binary BVH tree, where primitives are recursively divided based on their bounding boxes.</li>
+                    <li>Task 2 requires implementing ray-box intersection to update the interval of t-values for ray-box intersections.</li>
+                    <li>In Task 3, we implement ray-primitive intersection tests, facilitating efficient traversal of the BVH tree for ray tracing.</li>
+                </ul>
+
+                <b>Part 3:</b><br>
+                <ul>
+                    <li>Task 1 involves implementing the Diffuse BSDF function to represent materials that reflect incoming light equally in all directions on the hemisphere.</li>
+                    <li>For Task 2, we focus on zero-bounce illumination, where we return the emission of the object intersected by the ray.</li>
+                    <li>In Task 3, we implement direct lighting estimations using uniform hemisphere sampling to estimate the direct lighting on a point.</li>
+                </ul>
+
+                <b>Part 4:</b><br>
+                <ul>
+                    <li>Task 1 involves implementing a function for the DiffuseBSDF class to represent a diffuse material that reflects incoming light equally in all directions on the hemisphere.</li>
+                    <li>For Task 2, we work on global illumination with up to N bounces of light. This involves implementing functions to handle the sampling of incoming light directions and estimating radiance for multiple bounces.</li>
+                    <li>In Task 3, we enhance the global illumination by implementing Russian Roulette, providing an unbiased method of random termination.</li>
+                </ul>
+
+                <b>Part 5:</b><br>
+                <ul>
+                    <li>Adaptive sampling in path tracing dynamically adjusts the number of samples per pixel based on statistics, concentrating samples in areas with higher noise levels to reduce overall noise in the rendered image. 
+                        This approach utilizes statistical measures, such as mean and standard deviation, to determine convergence and optimize sampling efficiency.</li>
+                </ul>
+
+                <p>Each part of the project builds upon the previous one, gradually enhancing our understanding of physically-based rendering.</p>
+            </p>
+        </section>
+
+        <section>
+            <br>
+            <br>
+
+            <h2>Part 1: Ray Generation and Scene Intersection</h2>
+            <p>
+                Ray generation is a the process of transforming a pixel coordinate into a ray in 3D space. 
+                This is used to determine what a camera sees in a scene.<br><br>
+                <b>The Ray Generation algorithm works as follows:</b><br>
+                    <ol>
+                        <li>Convert the x, y coordinates to radians</li>
+                        <li>Calculate the horizontal and vertical POV angle in radians, take the tangent of them, and scale it by twice the x or y coordinate minues 0.5, to adjust for the screen size  </li>
+                        <li>Normalize the ray and convert it into worldspace</li>
+                    </ol>
+                
+                Now that we have rays, we need to determine what they intersect with in the scene. 
+                This is done by testing the ray against primitives in the scene, such as triangles and spheres.
+                For each primitive, we need to calculate the intersection point, and the normal at that point.
+                We do this using the Moller-Trumbore algorithm for triangles, and the quadratic formula for spheres.<br><br>
+                <b>The Moller-Trumbore Algorithm is as follows:</b>
+                <ol>
+                    <li>First we calculate the edge vectors of the triangle.</li>
+                    <li>Next we calculate the norm vector of the triangle, which is the cross product of the two edge vectors.</li>
+                    <li>Next, we calculate the determinant of the matrix formed by the ray direction and the edge vectors. If the determinant is close to zero, we return false, as the ray is parallel to the triangle.</li>
+                    <li>Next, we calculate the barycentric coordinates of the intersection point, and check if they are within the bounds of the triangle. If they are, we return true, otherwise we return false.</li>
+                    <li>If an intersection does occur, we set the properties of the intersection to the values we found before. We set the 
+                      time of intersection to the time value we found, the primative to the triangle we are checking, we use get_bsdf to find the surface material of the triangle, and calculate the interpolated normal  </li>
+                </ol>
+
+                For spheres we used the quadratic formula to calculate the intersection points, and the normal at that point.<br><br>
+                <b>The quadratic formula is as follows:</b>
+                <ol>
+                    <li>First we find the discriminant, which is b * b - 4 * a * c</li>
+                    <li>If the discriminant is less than 0, we return false, because this means that the ray does not have an intersection with the sphere</li>
+                    <li>Next we solve the quadratic formula to find the two possible points of intersection</li>
+                    <li>If there is an intersection, we assign either max_t or min_t to it, depending on the value</li>
+                </ol>
+              
+                <b>Here are some images of small .dae files using normal shading:</b><br>
+
+                <div class="image-row">
+                    <div class="image">
+                        <img src="images/part1/CBempty.png" alt="An empty box">
+                        <p><center>An empty box</center></p>
+                    </div>
+                    <div class="image">
+                        <img src="images/part1/CBgems.png" alt="Some gems!">
+                        <p><center>Some gems in a box!</center></p>
+                    </div>
+                </div>
+
+                <div class="image-row">
+                    <div class="image">
+                        <img src="images/part1/cube.png" alt="It's a cube!">
+                        <p><center>It's a cube!</center></p>
+                    </div>
+                    <div class="image">
+                        <img src="images/part1/teapot.png" alt="The teapot strikes again!">
+                        <p><center>The teapot returns again!</center></p>
+                    </div>
+                </div>
+        </section>
+
+        <section>
+            <br>
+            <br>
+
+            <h2>Part 2: Bounding Volume Hierarchy</h2>
+            <p>
+                When we start dealing with larger meshes, our old technique of brute-forcing through every triangle in the scene becomes inefficient and untenable.
+                This is where the Bounding Volume Hierarchy (BVH) comes in. The BVH is a tree data structure that partitions the scene into smaller and smaller volumes, 
+                until we reach a point where we can efficiently test for intersections with the primitives in the scene.<br><br>
+                <b>Our BVH construction algorithm works as follows:</b><br>
+                <ol> 
+                    <li>First we calculate a bounding box that includes all primitives between the start and end of the primitive list</li>
+                    <li>Next we create a new BVH node with that bounding box</li>
+                    <li>After that we check if the size of the box is less than the max_leaf size, if it is we know this node is a leaf node and we return</li>
+                    <li>Next we calculate the midpoint of the bounding box along the longest axis</li>
+                    <li>Then we sort the primitives based on the midpoint, and use that to split it into two lists</li>
+                    <li>Finally we recursively call the BVH constructor on the two lists, from the start to the midpoint for the left node, and from the midpoint to the end for the right node</li>
+                </ol>
+
+                We chose to use the centroid of the split axis as our heuristic for splitting the primitives, this results in a highly balanced tree as the split axis is always the longest axis of the bounding box, 
+                and the centroid is the midpoint of the bounding box along that axis, resulting in a tree that will likely give us close to logarithmic time for intersection tests. 
+                Another benefit is likely that it increases spacial locality in the tree, as all nodes that are close together in the list of primatives will be relativly close in the tree,
+                which might help to accelerate search times.<br><br>
+              
+                <b>Using our BVH, we can now render large meshes:</b><br>
+
+                <div class="image-row">
+                    <div class="image">
+                        <img src="images/part2/beast.png" alt="A beast... of some description">
+                        <p><center>A beast... of some description</center></p>
+                    </div>
+                    <div class="image">
+                        <img src="images/part2/peter.png" alt="It's Peter!">
+                        <p><center>It's Peter!</center></p>
+                    </div>
+                </div>
+
+                <div class="image-row">
+                    <div class="image">
+                        <img src="images/part2/walle.png" alt="It's Wall-E!">
+                        <p><center>WALL-E!</center></p>
+                    </div>
+                    <div class="image">
+                        <img src="images/part2/CBlucy.png" alt="A rather cool statue!">
+                        <p><center>It's a cool statue (feels straight out of Uncharted)!</center></p>
+                    </div>
+                </div>
+
+                
+
+                <h3>Here are some rendering times for complex geometries with and without the BVH:</h3>
+                <table>
+                    <tr>
+                      <th>Scene</th>
+                      <th>Rendering Time without BVH (s)</th>
+                      <th>Rendering Time with BVH (s)</th>
+                    </tr>
+                    <tr>
+                      <td>cow.dae</td>
+                      <td>5.8093</td>
+                      <td>0.0390</td>
+                    </tr>
+                    <tr>
+                      <td>peter.dae</td>
+                      <td>45.3283</td>
+                      <td>0.0385</td>
+                    </tr>
+                    <tr>
+                      <td>Beast.dae</td>
+                      <td>101.6704</td>
+                      <td>0.0315</td>
+                    </tr>
+                    <tr>
+                      <td>CBgems.dae</td>
+                      <td>0.2389</td>
+                      <td>0.0378</td>
+                    </tr>
+                    <tr>
+                      <td>CBcoil.dae</td>
+                      <td>7.7095</td>
+                      <td>0.0306</td>
+                    </tr>
+                    <tr>
+                      <td>dragon.dae</td>
+                      <td>DnF</td>
+                      <td>0.0430</td>
+                    </tr>
+                    <tr>
+                      <td>CBlucy.dae</td>
+                      <td>DnF</td>
+                      <td>0.0331</td>
+                    </tr>
+                    <tr>
+                      <td>walle.dae</td>
+                      <td>DnF</td>
+                      <td>0.0184</td>
+                    </tr>
+                </table>
+
+                <br>
+
+                Our BVH structure sped up all renderings to a fraction of the time it took to render without the BVH structure. 
+                This is because of the reduction of the search time to a logarithmic time rather than linear time, 
+                which especially helped for images with a much more complex geometry, 
+                for which linear search would have to search over many magnitudes more triangles, making it highly impractical. 
+
+        </section>
+
+        <section>
+            <br>
+            <br>
+
+            <h2>Part 3: Direct Illumination</h2>
+            <p>
+                Direct illumination is the process of calculating the light that directly hits a point in the scene.
+                There are two ways this can be done: by sampling the hemisphere above the point uniformly (Uniform Hemisphere Sampling), 
+                or by sampling the light sources in the scene (Importance Light Sampling).<br><br>
+                 
+                <b>Our Uniform Hemisphere Sampling algorithm works as follows:</b>
+                <ol>
+                    <li>We first sample the hemisphere for a random object space vector</li>
+                    <li>Next we convert the object space vector to world space</li>
+                    <li>We then calculate a ray that represents the reflected ray leaving the hit point and heading in the direction of the random vector</li>
+                    <li>Next we calculate the cosine of the angle between the normal of the intersection and the sampled ray</li>
+                    <li>We then check if there is an intersection between the reflected ray and the bvh structure</li>
+                    <li>If it does, we first get its radiance, then use the reflection equation to calculate the the amount of outgoing light from that ray, and add it to the total radiance</li>
+                    <li>Finally we return the total radiance averaged by the number of samples</li>
+                </ol>
+
+                <b>Our Importance Light Sampling algorithm works as follows:</b>
+                <ol>
+                    <li>For each light point, run the algorithm one time</li>
+                    <li>First, check if the light is a delta light, if it is, then sample once, otherwise sample ns_area times</li>
+                    <li>Next, for each light sample take num_samples samples of the light emissions of that light point</li>
+                    <li>Next, calculate the direction of the light sample, by calculating the dot product between the intersection and the normalized sample</li>
+                    <li>Then create a new ray that starts at teh hit point and is directed at the new sample ray </li>
+                    <li>Next, check if the ray intersects with the bvh structure, if it does, then calculate the radiance of the intersection and add it to the total radiance</li>
+                    <li>Finally, return the total radiance averaged by the number of samples</li>
+                  </ol>
+
+                <b>The Bunny, first with Hemisphere Sampling and then Importance Sampling</b>
+                <div class="image-row">
+                    <div class="image">
+                        <img src="images/part3/direct_uniform/CBbunny_H_64_32.png" alt="The bunny rendered with hemisphere sampling">
+                        <p><center>The bunny rendered with hemisphere sampling</center></p>
+                    </div>
+                    <div class="image">
+                        <img src="images/part3/direct_importance_sampling/bunny_64_32.png" alt="The bunny rendered with importance sampling">
+                        <p><center>The bunny rendered with importance sampling</center></p>
+                    </div>
+                </div>
+
+
+                <b>The Spheres, first with Hemisphere Sampling and then Importance sampling</b>
+                <div class="image-row">
+                    <div class="image">
+                        <img src="images/part3/direct_uniform/CBspheres_H_64_32.png" alt="The spheres rendered with hemisphere sampling">
+                        <p><center>The spheres rendered with hemisphere sampling</center></p>
+                    </div>
+                    <div class="image">
+                        <img src="images/part3/direct_importance_sampling/CBspheres_lambertian_64_32.png" alt="The spheres rendered with importance sampling">
+                        <p><center>The spheres rendered with importance sampling</center></p>
+                    </div>
+                </div>
+
+                <b>Here are some scenes only possible with Importance sampling</b>
+                <div class="image-row">
+                    <div class="image">
+                        <img src="images/part3/direct_importance_sampling/dragon_64_32.png" alt="It's a Dragon! How Majestic!">
+                        <p><center>It's a dragon! How Majestic!</center></p>
+                    </div>
+                    <div class="image">
+                        <img src="images/part3/direct_importance_sampling/walle_64_32.png" alt="It's WALL-E!!!!">
+                        <p><center>WALL-E? WALL-E!!!!!</center></p>
+                    </div>
+                </div>
+
+                Notice how the hemisphere sampling has a significant amount of noise, while the importance sampling has a lot less noise and generally looks better.
+                An interesting note is that the area around the light source in hemisphere sampling experiences some degree of light bleed, 
+                whereas this effect is entirely absent in the importance sampling. 
+                Another important note is that importance sampling enables the use of delta lights, which are lights that emit light from a single point.
+                These lights are not possible to use with hemisphere sampling, thus making many scenes impossible to render with hemisphere sampling.
+                <br>
+                <br>
+
+                <b>Let's take a look at a single scene rendered using importance sampling by varying the number of samples taken per light source with one sample per pixel:</b>
+                <div class="image-row">
+                    <div class="image">
+                        <img src="images/part3/light_rays_sampling/spheres_64_32_l1.png" alt="The spheres with 1 light ray">
+                        <p><center>The spheres with 1 light ray</center></p>
+                    </div>
+                    <div class="image">
+                        <img src="images/part3/light_rays_sampling/spheres_64_32_l4.png" alt="The spheres with 4 light rays">
+                        <p><center>The spheres with 4 light rays</center></p>
+                    </div>
+                </div>
+                <div class="image-row">
+                    <div class="image">
+                        <img src="images/part3/light_rays_sampling/spheres_64_32_l16.png" alt="The spheres with 16 light rays">
+                        <p><center>The spheres with 16 light rays</center></p>
+                    </div>
+                    <div class="image">
+                        <img src="images/part3/light_rays_sampling/spheres_64_32_l64.png" alt="The spheres with 64 light rays">
+                        <p><center>The spheres with 64 light rays</center></p>
+                    </div>
+                </div>
+
+                As we can see, the more light rays we sample, the less noise we get in the image. This is because we are taking more samples of the light source,
+                which allows us to more accurately estimate the radiance of the light source, and thus the radiance of the scene. 
+                This increased sampling rate per light source contributes to faster convergence of the rendering process, 
+                resulting in images with smoother gradients, sharper details, and reduced noise levels.
+                An interesting note is how the noise in the back grey wall is different from the noise on the spheres or the other walls. 
+                Rather than the noise manifesting as black speckles, the noise on the wall is comprised of a lighter grey or white speckles.
+        </section>
+
+        <section>
+            <br>
+            <br>
+
+            <h2>Part 4: Global Illumination</h2>
+            <p>
+            
+            <b>Our global illumination algorithm works as follows</b>
+            <ol>
+                <li>First we check if the input ray is of depth 1. If it is, this is our base case, and we simply return one_bounce_radiance</li>
+                <li>The one bounce radiance function will estimate the lighting based on either hemisphere sampling or lighting importance, based on the user input</li>
+                <li>If the user has set isAccumBounces to true, we will add one_bounce_radiance for our current ray and intersection to L_out. Else, we don not as we seek to only return the contribution of the last bounce.</li>
+                <li>Based on a hardcoded probability (0.7 for a ray to be kept, 0.3 for the ray to be stopped), we determine whether the current ray will continue to be traced to another bounce, or if we are ending here.</li>
+                <li>If we are to continue tracing, we will sample from the intersection BRDF and create a ray from the hit point in the direction of the the object space normalized sampled incident light direction</li>
+                <li>After this we recursively call at_least_one_bounce_radiance on a new intersection and the aggregated intersection</li>
+                <li>Then we scale the accumulated bounces by the BRDF we found earlier, the cosine of the reflection, the russian roulette probability, and the pdf we got from the BSDF</li>
+                <li>Finally we return the total radiance averaged by the number of samples</li>
+            </ol>
+
+
+            <b>Let's take a look at a single scene rendered using global(both direct and indirect) illumination:</b>
+            <div class="image-row">
+                <div class="image">
+                    <img src="images/part4/t1/bunny_s1024.png" alt="The bunny with global illumination">
+                    <p><center>What a glorious bunny!</center></p>
+                </div>
+                <div class="image">
+                    <img src="images/part4/t1/spheres_s1024.png" alt="The spheres with global illumination">
+                    <p><center>Two spheres in glorious global illumination!</center></p>
+                </div>
+            </div>
+
+            <b>Lets examine the scene with one direct illumination versus only indirect illumination</b>
+            <div class="image-row">
+                <div class="image">
+                    <img src="images/part4/t2/bunny_directOnly.png" alt="The bunny with only direct illumination">
+                    <p><center>The bunny with only direct illumination</center></p>
+                </div>
+                <div class="image">
+                    <img src="images/part4/t2/bunny_indirectOnly.png" alt="The bunny with only indirect illumination">
+                    <p><center>The bunny with only indirect illumination</center></p>
+                </div>
+            </div>
+
+            <b>Lets examine the scene with varying max_ray_depth (0, 1, 2, 3, 4, 5, 100) and no russian roulette sampling or bounce accumulation</b>
+            <div class="image-row">
+                <div class="image">
+                    <img src="images/part4/t4/bunny0.png" alt="The bunny at the 0th bounce of light">
+                    <p><center>The bunny at the 0th bounce of light</center></p>
+                </div>
+                <div class="image">
+                    <img src="images/part4/t4/bunny1.png" alt="The bunny at the 1st bounce of light">
+                    <p><center>The bunny at the 1st bounce of light</center></p>
+                </div>
+            </div>
+            <div class="image-row">
+                <div class="image">
+                    <img src="images/part4/t4/bunny2.png" alt="The bunny at the 2nd bounce of light">
+                    <p><center>The bunny at the 2nd bounce of light</center></p>
+                </div>
+                <div class="image">
+                    <img src="images/part4/t4/bunny3.png" alt="The bunny at the 3rd bounce of light">
+                    <p><center>The bunny at the 3rd bounce of light</center></p>
+                </div>
+            </div>
+            <div class="image-row">
+                <div class="image">
+                    <img src="images/part4/t4/bunny4.png" alt="The bunny at the 4th bounce of light">
+                    <p><center>The bunny at the 4th bounce of light</center></p>
+                </div>
+                <div class="image">
+                    <img src="images/part4/t4/bunny5.png" alt="The bunny at the 5th bounce of light">
+                    <p><center>The bunny at the 5th bounce of light</center></p>
+                </div>
+            </div>
+            <div class="image-row-centered">
+                <div class="image">
+                    <img src="images/part4/t4/bunny100.png" alt="The bunny at the 100th bounce of light">
+                    <p><center>The bunny at the 100th bounce of light</center></p>
+                </div>
+            </div>
+
+            Notice the large contribution to the final image that both bounce two and three provide. In bounce two, we get the first indirect light, which has bounced up and from the walls.
+            This light illuminates the lower part of the bunny as well as the ceiling, while also producing the color casting that we see from the walls onto the floor.
+            The third bounce provides a more subtle contribution, but it is still noticeable. It provides a more even distribution of light, and also provides a more subtle color casting from the walls onto the floor.
+            It also impacts the shadows present on the bunny, making them less harsh and more diffused. 
+            Pure rasterization misses out on this entirely, resulting in an image that viscerally feels like it isn't grounded as well as an image that has unrealistically dark and sharp shadows, with no color casting that's seen in everyday life. <br> <br> <br>
+
+            <b>Lets examine the scene with varying max_ray_depth (0, 1, 2, 3, 4, 5) and no russian roulette sampling but with bounce accumulation</b>
+            <div class="image-row">
+                <div class="image">
+                    <img src="images/part4/t5/bunny0.png" alt="The bunny with 0 depth rays">
+                    <p><center>The bunny with 0 depth rays</center></p>
+                </div>
+                <div class="image">
+                    <img src="images/part4/t5/bunny1.png" alt="The bunny with 1 depth rays">
+                    <p><center>The bunny with 1 depth rays</center></p>
+                </div>
+            </div>
+            <div class="image-row">
+                <div class="image">
+                    <img src="images/part4/t5/bunny2.png" alt="The bunny with 2 depth rays">
+                    <p><center>The bunny with 2 depth rays</center></p>
+                </div>
+                <div class="image">
+                    <img src="images/part4/t5/bunny3.png" alt="The bunny with 3 depth rays">
+                    <p><center>The bunny with 3 depth rays</center></p>
+                </div>
+            </div>
+            <div class="image-row">
+                <div class="image">
+                    <img src="images/part4/t5/bunny4.png" alt="The bunny with 4 depth rays">
+                    <p><center>The bunny with 4 depth rays</center></p>
+                </div>
+                <div class="image">
+                    <img src="images/part4/t5/bunny5.png" alt="The bunny with 5 depth rays">
+                    <p><center>The bunny with 5 depth rays</center></p>
+                </div>
+            </div>
+            
+            As we include more bounces, we see a more even distribution of light, and also a more subtle color casting from the walls onto the floor. 
+            The most obvious difference comes between bounce 1 and 2, where bounce 2 introduces reflected light from the floor that both illuminates the lower part of the bunny as well as the ceiling. 
+            The floor also takes on the slightest hint of the color of the walls, which is a subtle but important detail that adds to the realism of the scene.
+            However, notable differences are also present between bounce 2 and 3, where bounce 3 provides a more even distribution of light with much more visible color casting from the walls onto the floor.
+            From thereafter, the differences become more subtle, but they are still present. <br> <br> <br>
+
+
+            <b>Lets take a look at a single scene with Russian Roulette Sampling with varying ray depths (0, 1, 2, 3, 4, 100)</b>
+            <div class="image-row">
+                <div class="image">
+                    <img src="images/part4/t6/bunny0.png" alt="The bunny with 0 depth rays">
+                    <p><center>The bunny with 0 depth rays</center></p>
+                </div>
+                <div class="image">
+                    <img src="images/part4/t6/bunny1.png" alt="The bunny with 1 depth rays">
+                    <p><center>The bunny with 1 depth rays</center></p>
+                </div>
+            </div>
+            <div class="image-row">
+                <div class="image">
+                    <img src="images/part4/t6/bunny2.png" alt="The bunny with 2 depth rays">
+                    <p><center>The bunny with 2 depth rays</center></p>
+                </div>
+                <div class="image">
+                    <img src="images/part4/t6/bunny3.png" alt="The bunny with 3 depth rays">
+                    <p><center>The bunny with 3 depth rays</center></p>
+                </div>
+            </div>
+            <div class="image-row">
+                <div class="image">
+                    <img src="images/part4/t6/bunny4.png" alt="The bunny with 4 depth rays">
+                    <p><center>The bunny with 4 depth rays</center></p>
+                </div>
+                <div class="image">
+                    <img src="images/part4/t6/bunny100.png" alt="The bunny with 100 depth rays">
+                    <p><center>The bunny with 100 depth rays</center></p>
+                </div>
+            </div>
+
+            <b>Let's take a look at a single scene rendered various sample-per-pixel rates (0, 1, 2, 4, 8, 16, 64):</b>
+            <div class="image-row">
+                <div class="image">
+                    <img src="images/part4/t7/bunny1.png" alt="The bunny with 1 sample-per-pixel">
+                    <p><center>The bunny with 1 sample-per-pixel</center></p>
+                </div>
+                <div class="image">
+                    <img src="images/part4/t7/bunny2.png" alt="The bunny with 1 sample-per-pixel">
+                    <p><center>The bunny with 2 sample-per-pixel</center></p>
+                </div>
+            </div>
+            <div class="image-row">
+                <div class="image">
+                    <img src="images/part4/t7/bunny4.png" alt="The bunny with 4 sample-per-pixel">
+                    <p><center>The bunny with 4 sample-per-pixel</center></p>
+                </div>
+                <div class="image">
+                    <img src="images/part4/t7/bunny8.png" alt="The bunny with 8 sample-per-pixel">
+                    <p><center>The bunny with 8 sample-per-pixel</center></p>
+                </div>
+            </div>
+            <div>
+            <div class="image-row">
+                <div class="image">
+                    <img src="images/part4/t7/bunny16.png" alt="The bunny with 16 sample-per-pixel">
+                    <p><center>The bunny with 16 sample-per-pixel</center></p>
+                </div>
+                <div class="image">
+                    <img src="images/part4/t7/bunny64.png" alt="The bunny with 64 sample-per-pixel">
+                    <p><center>The bunny with 64 sample-per-pixel</center></p>
+                </div>
+            </div>
+            <div>  
+                <div class="image-row-centered">
+                    <div class="image">
+                        <img src="images/part4/t7/bunny1024.png" alt="The bunny with 1024 sample-per-pixel">
+                        <p><center>The bunny with 1024 sample-per-pixel</center></p>
+                    </div>
+            </div>
+            </div> 
+
+            <br>
+            <b>A closer look at the diffrences between different sample-per-pixel rates</b>
+            <p>
+                From the rendered image of the bunny with sample-per-pixel rates of 1, 2, 4, 8, 16, 64, and 1024, we can clearly see a decrease in the noise level as the sample-per-pixel rate increases.
+                This is likely caused by the increased number of samples taken per pixel, which allows for a more accurate estimation of the radiance of the scene, and thus a more accurate rendering of the scene.
+                We can also see that as we increase the pixel count the shawdows become less harsh and more diffused, and the light and color casting onto the walls, bunny, and floor becomes more accurate and realistic.
+            </p>
+            </p>
+
+        </section>
+
+        <section>
+            <h2>Part 5: Adaptive Sampling</h2>
+            <p>
+                Adaptive sampling is used to minimize the number of samples per pixel based on the mean and standard deviation of the samples, and works by taking more samples in areas with higher noise levels, and less in areas 
+                that have less noise, as to maximize the quality of the image without causing a large number of unneeded samples in low noise areas. 
+                <br>
+                <br>
+                <b>Our adaptive sampling algorithm works as such:</b>
+                <ol>
+                    <li>In every sample loop, we generate the value of the illumination of the radiance we estimated globally.</li>
+                    <li>Then we add that value to a variable called s1, and then add the squared value to s2.</li>
+                    <li>Then every "batch" loops we calculate the mean by dividing s1 by the number of samples we have taken so far, calculate the variance by with the variance formula and s2.</li>
+                    <li>From that we calculate a variable called I, which is the z-test confidence interval for 95% confidence times the standard deviation divided by the square root of the number of samples. 
+                        We then compare that value to the maxTolerance times the mean. If the value I is less than that value, we know the equation has converged and we break the loop. Otherwise, we continue taking samples. </li>
+                    <li>At the end, we return the total radiance that we found and divide it by the number of samples.</li>
+                </ol>
+                <b>Lets look at two scenes with adaptive sampling, both with 2048 samples per pixel:</b>
+                <div class="image-row">
+                    <div class="image">
+                        <img src="images/part5/spheres_p5_s2048_a64_l1_m6.png" alt="The rendering of the spheres with adaptive sampling">
+                        <p><center>The rendering of the spheres with adaptive sampling</center></p>
+                    </div>
+                    <div class="image">
+                        <img src="images/part5/spheres_p5_s2048_a64_l1_m6_rate.png" alt="The sample rate of the spheres">
+                        <p><center>The sample rate of the spheres</center></p>
+                    </div>
+                </div>
+                <div class="image-row">
+                    <div class="image">
+                        <img src="images/part5/bench_p5_s2048_a64_l1_m6.png" alt="The rendering of the bench with adaptive sampling">
+                        <p><center>The rendering of the bench with adaptive sampling</center></p>
+                    </div>
+                    <div class="image">
+                        <img src="images/part5/bench_p5_s2048_a64_l1_m6_rate.png" alt="The sample rate of the bench">
+                        <p><center>The sample rate of the bench</center></p>
+                    </div>
+                </div>
+                Notice how regions in shadow or that lack direct light are much more heavily sampled as compared to other regions. 
+                Intuitively, this makes sense, as these regions are more likely to have higher noise levels due to the increased bounces light must take to arrive there, and thus require more samples to converge.
+                Conversely, regions that are directly illuminated or have a direct line of sight to the light source are less heavily sampled, as they are less likely to have high noise levels, and thus require less samples to converge.
+            </p>
+        </section>
+
+
+        <section>
+            <h2>Part 6: Extra Credit</h2>
+            We decided to implement a new BVH that used the Surface Area Heuristic to split the primitives. 
+            It works very similarly to the conventional centroid BVH, but instead of using the centroid of the bounding box as our splitting point, we use the surface area of the bounding box.
+            We test surface areas for each split point, and choose the one that minimizes the cost function.
+            Once the BVH has been built, this surface area heuristic BVH is noticeably faster to render, but this comes at the brutal cost of a much longer construction time.
+            With both taken into account, the surface area heuristic still technically outperforms the centroid heuristic, but the difference is not as large as one might expect.
+
+            <h3>Speed results on bunny.dae, using these commands: -s 2048 -a 64 0.05 -l 1 -m 6 -r 480 360</h3>
+            <p>
+                <table>
+                    <tr>
+                        <th>BVH Type</th>
+                        <th>BVH Construction Time (s)</th>
+                        <th>Rendering Time (s)</th>
+                        <th>Rays traced through BVH</th>
+                        <th>Average rays per second</th>
+                    </tr>
+                    <tr>
+                        <td>Conventional Centroid</td>
+                        <td>0.0789</td>
+                        <td>63.3972</td>
+                        <td>520422213</td>
+                        <td>8.2089e6</td>
+                    </tr>
+                    <tr>
+                        <td>Surface Area</td>
+                        <td>22.0255</td>
+                        <td>41.9036</td>
+                        <td>447394660</td>
+                        <td>10.6768e6</td>
+                    </tr>
+                </table>
+            </p>
+
+            Note that the conventional BVH has the advantage in this scenario of benefiting from the adaptive sampling heavily cutting down on the number of rays traced. Had we not used adaptive sampling, the surface area BVH would have demonstrated an even larger advantage in rendering time.
+            We can conclude that given a situation in which a very large number of rays are traced, the surface area heuristic BVH will outperform the centroid heuristic BVH, 
+            but in a situation where the number of rays traced is heavily reduced, the centroid heuristic BVH will outperform the surface area heuristic BVH due to its much faster construction time.<br><br>
+
+            <b>Here's the two rendered bunnies!</b>
+            <div class="image-row">
+                <div class="image">
+                    <img src="images/part6/bunny_conventional.png" alt="Bunny rendered with conventional BVH">
+                    <p><center>Bunny rendered with conventional BVH</center></p>
+                </div>
+                <div class="image">
+                    <img src="images/part6/bunny_sa.png" alt="Bunny rendered with surface area BVH">
+                    <p><center>Bunny rendered with surface area BVH</center></p>
+                </div>
+            </div>
+
+        </section>
+
+    </div>
+
+    <footer>
+        <p>Pranav Kolluri, 2024<br>
+        CS184: Computer Graphics and Imaging<br>
+        University of California, Berkeley</p>
+    </footer>
+
+
+</body>
 </html>
